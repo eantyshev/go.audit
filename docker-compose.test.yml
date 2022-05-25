@@ -1,0 +1,59 @@
+version: "3"
+
+networks:
+  api:
+    driver: bridge
+  rabbit:
+    driver: bridge
+  redis:
+    driver: bridge
+
+services:
+  integration_tests:
+    build: integration_tests
+    depends_on:
+      - krutilka
+    environment:
+      KRUTILKA_API_URL: "http://krutilka:8080"
+      KRUTILKA_RABBIT_DSN: "amqp://guest:guest@rabbit:5672"
+    command: go test -v ./...
+    networks:
+      - api
+      - rabbit
+
+  krutilka:
+    build: .
+    depends_on:
+      - redis
+    # restart: on-failure
+    ports:
+      - "8888:8080"
+    expose:
+      - 8080
+    environment:
+      KRUTILKA_HTTP_LISTEN: ":8080"
+      KRUTILKA_REDIS_ADDR: "redis:6379"
+      KRUTILKA_RABBIT_DSN: "amqp://guest:guest@rabbit:5672"
+    networks:
+      - redis
+      - rabbit
+      - api
+
+  redis:
+    image: redis:5
+    ports:
+      - "7379:6379"
+    expose:
+      - 6379
+    networks:
+      - redis
+
+  rabbit:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+    expose:
+      - 5672
+    networks:
+      - rabbit
+
