@@ -1,5 +1,5 @@
 # Environment
-FROM golang:1.18 as build-env
+FROM golang:1.18.2 as build-env
 
 RUN mkdir -p /opt/go.audit
 WORKDIR /opt/go.audit

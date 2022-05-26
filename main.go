@@ -12,7 +12,7 @@ import (
 )
 
 func LoadConfig(cfgPath string) {
-	viper.SetEnvPrefix("audit")
+	viper.SetEnvPrefix("audit_api")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 	viper.SetConfigFile(cfgPath)

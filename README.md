@@ -4,32 +4,42 @@
 
 Trivial audit log service, providing API to store and retrieve audit events
 
-_id_ -- uuid4 strings
+## Local deployment
+Execute `make build` to build docker images
+Execute `make run` and the service will be brought up using `docker-compose.yml`
+REST API will be listening at `localhost:8080`
+## Usage
 
-## Manual use
-
-После `make run` REST API сервиса доступно на порту 8888
-(можно также просматривать содержимое Редиса на порту 7379)
-* Добавить новый баннер 1 и привязать его к слоту 4:
-> curl -v -H "Content-Type: application/json" http://localhost:8888/add_banner -d '{"slot_id": 4, "banner_id": 1, "description": "descr 22"}'
-* Привязать баннер 1 к слоту 5
-> curl -v -H "Content-Type: application/json" http://localhost:8888/add_banner -d '{"slot_id": 5, "banner_id": 1}'
-* Отвязать баннер от слота 4
-> curl -v -H "Content-Type: application/json" http://localhost:8888/remove_banner -d '{"slot_id": 4, "banner_id": 1}'
-* Выбрать баннер для показа группе 100 в слоте 5
-> curl -v -H "Content-Type: application/json" http://localhost:8888/choose_banner -d '{"slot_id": 5, "group_id": 100}'
-> 
-> {"id": 1}
-* Добавить клик баннеру 1
-> curl -v -H "Content-Type: application/json" http://localhost:8888/click -d '{"slot_id": 5, "banner_id": 1, "group_id": 100}
-
+* Post the new audit event (using the default secret from ):
+> curl -v -X POST -H "X-Api-Key: supersecret1"  -H "Content-Type: application/json" http://localhost:8080/v1/event -d '{"type": "t1", "consumer": "c1"}'
+* Post another with custom payload
+> curl -v -X POST -H "X-Api-Key: supersecret1"  -H "Content-Type: application/json" http://localhost:8080/v1/event -d '{"type": "t2", "consumer": "c1", "payload": {"t2_param": 123}}'
+* List all events
+> curl -v -X GET -H "X-Api-Key: supersecret1" -H "Content-Type: application/json" http://localhost:8080/v1/events -d '{}'
+* List by type, consumer, created_from/created_to range (any of these is optional)
+> curl -v -X GET -H "X-Api-Key: supersecret1" -H "Content-Type: application/json" http://localhost:8080/v1/events -d '{"type": "t2", "created_from": "2022-05-25T16:10:00Z", "consumer": "c1"}'
+```
+{
+    "events": [
+        {
+            "id": "628f4fe793347802739d3a03",
+            "type": "t2",
+            "consumer": "c1",
+            "created_at": "2022-05-26T10:01:11.923Z",
+            "payload": {
+                "t2_param": 123
+            }
+        }
+    ]
+}
+```
+__note__ that `id` and `created_at` fields appeared
 ## Unit tests
 
 ```make unittest```
-
-Алгоритм UCB1 тестируется в юнит тестах
+Handlers are tested using in-memory storage
 
 ## Integration tests
 
-Чтобы запустить интеграционные тесты, надо сделать `make test`
-Запустится тестовое окружение и контейнер с тестами, код возврата команды соответствует успеху или неуспеху
+Run `make test` for integration tests which run into separate container (defined in `docker-compose.test.yml`)
+Testing environment will be deployed and the tests will be executed, see the exit code for result

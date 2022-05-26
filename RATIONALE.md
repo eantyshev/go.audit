@@ -78,7 +78,7 @@ Further, we may event introduce sharding by consumer ID hash
 
 ### Consuming events via Message Queue
 * Sometimes primary replica goes down, and cluster doesn't serve write requests for ~10sec
-* Producers don't want to wait for write confirmation.
+* Even in normal operation producers don't want to wait for write confirmation.
 It is natural that we need a MQ to store in-flight messages (events).
 RabbitMQ is free, scalable and configurable.
 But to keep the prototype simple we implement an endpoint  `POST /v1/event` which synchronously saves a log record.

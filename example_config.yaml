@@ -1,6 +1,5 @@
 http:
   listen: :8080
   timeout: 10s
-  api_key: "supersecret1"
 mongo:
-  uri: mongodb://localhost:27018/w=0
+  uri: mongodb://root:example@mongo:27017/
