@@ -54,11 +54,15 @@ func MakeQueryBSON(params entity.QueryParams) bson.M {
 		query_created := bson.A{}
 		if params.CreatedFrom != nil {
 			query_created = append(query_created,
-				bson.D{{"created_at", bson.D{{"$gt", *params.CreatedFrom}}}})
+				bson.D{
+					bson.E{Key: "created_at",
+						Value: bson.D{bson.E{Key: "$gt", Value: *params.CreatedFrom}}}})
 		}
 		if params.CreatedTo != nil {
 			query_created = append(query_created,
-				bson.D{{"created_at", bson.D{{"$lt", *params.CreatedTo}}}})
+				bson.D{
+					bson.E{Key: "created_at",
+						Value: bson.D{bson.E{Key: "$lt", Value: *params.CreatedTo}}}})
 		}
 		query["$and"] = query_created
 	}

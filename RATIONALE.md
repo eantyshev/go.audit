@@ -18,12 +18,12 @@ Event:
 * and a free-form `payload` (optional)
 
 ### Authentication
-Assuming that our consumers are within some security perimeter, we choose the simpliest approach: api key
-Enforce setting the env variable AUDIT_API_KEY and expect the key in X-Api-Key header
+Assuming that our consumers are within some security perimeter, we choose the simplest approach: API key
+Enforce setting the env variable AUDIT_API_KEY and expect the key in `X-Api-Key` header
 
 ### Storage
 We need a flexible schema, multiple indexes for fast queries, and a high insert rate: MongoDB seems a good match.
-We'll have a single database and collection dbevents.events
+We'll have a single database `dbevents` and a collection `events`
 Must-have indexes: by created_at, consumer
 Testing AIO environment will have a single MongoDB instance.
 
@@ -73,12 +73,12 @@ response:
 
 ## TODO
 ### MongoDB cluster
-To get rid of single POF for inserts we need at least 2 replicas: primary and secondary for writes and reads respectively.
+To get rid of a single POF for inserts we need at least 2 replicas: primary and secondary for writes and reads respectively.
 Further, we may event introduce sharding by consumer ID hash
 
 ### Consuming events via Message Queue
-* Sometimes primary replica goes down, and cluster doesn't serve write requests for ~10sec
+* Sometimes primary replica goes down, and the cluster doesn't serve write requests for ~10sec
 * Even in normal operation producers don't want to wait for write confirmation.
-It is natural that we need a MQ to store in-flight messages (events).
-RabbitMQ is free, scalable and configurable.
+Naturally, we need an MQ to store in-flight messages (events).
+RabbitMQ is free, scalable, and configurable.
 But to keep the prototype simple we implement an endpoint  `POST /v1/event` which synchronously saves a log record.

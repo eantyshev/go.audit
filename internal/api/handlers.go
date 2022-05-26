@@ -27,34 +27,6 @@ func (s *AuditApi) checkKeyAuth() gin.HandlerFunc {
 	}
 }
 
-func MakeAuditApi(
-	addrPort string,
-	timeout time.Duration,
-	api_key string,
-	repo repository.RepoIface,
-) (s *AuditApi) {
-	s = &AuditApi{
-		Usecase: &usecase.Usecase{
-			Repo: repo,
-		},
-		api_key: api_key}
-
-	router := gin.Default()
-	router.Use(s.checkKeyAuth())
-	router.GET("/v1/events", s.getEventsHandler)
-	router.POST("/v1/event", s.addEventHandler)
-
-	s.httpSrv = &http.Server{
-		Addr:           addrPort,
-		Handler:        router,
-		ReadTimeout:    timeout,
-		WriteTimeout:   timeout,
-		MaxHeaderBytes: 1 << 20,
-	}
-
-	return s
-}
-
 func (s *AuditApi) ServeForever() {
 	panic(s.httpSrv.ListenAndServe())
 }
@@ -86,4 +58,32 @@ func (s *AuditApi) getEventsHandler(c *gin.Context) {
 		return
 	}
 	c.IndentedJSON(200, ListEventsResponse{Events: events})
+}
+
+func MakeAuditApi(
+	addrPort string,
+	timeout time.Duration,
+	api_key string,
+	repo repository.RepoIface,
+) (s *AuditApi) {
+	s = &AuditApi{
+		Usecase: &usecase.Usecase{
+			Repo: repo,
+		},
+		api_key: api_key}
+
+	router := gin.Default()
+	router.Use(s.checkKeyAuth())
+	router.GET("/v1/events", s.getEventsHandler)
+	router.POST("/v1/event", s.addEventHandler)
+
+	s.httpSrv = &http.Server{
+		Addr:           addrPort,
+		Handler:        router,
+		ReadTimeout:    timeout,
+		WriteTimeout:   timeout,
+		MaxHeaderBytes: 1 << 20,
+	}
+
+	return s
 }
