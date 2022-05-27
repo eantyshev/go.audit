@@ -51,7 +51,8 @@ List by type, consumer, created_from/created_to range (any of these is optional)
 __note__ that `id` and `created_at` fields appeared
 ## Unit tests
 
-Handlers are tested using in-memory storage
+TODO
+Generally integration tests are better, and under time restrictions it's better to put the effort in them
 
 ## Integration tests
 
