@@ -12,4 +12,7 @@ lint:
 run:
 	docker-compose up
 
-.PHONY: build unittest lint run
+test:
+	docker-compose -f docker-compose.test.yml up --exit-code-from integration_tests
+
+.PHONY: build unittest lint run test

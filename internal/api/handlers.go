@@ -20,7 +20,7 @@ type AuditApi struct {
 func (s *AuditApi) checkKeyAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.GetHeader("X-Api-Key") != s.api_key {
-			c.AbortWithStatus(http.StatusForbidden)
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{})
 		}
 		// allow request
 		c.Next()
