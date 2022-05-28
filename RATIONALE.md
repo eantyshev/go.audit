@@ -76,6 +76,9 @@ response:
 To get rid of a single POF for inserts we need at least 2 replicas: primary and secondary for writes and reads respectively.
 Further, we may event introduce sharding by consumer ID hash
 
+### Long-term storage
+With MongoDB as a runtime storage, we should establish a synchronization procedure with a big-data storage like Hadoop, and introduce TTL of MongoDB events
+
 ### Consuming events via Message Queue
 * Sometimes primary replica goes down, and the cluster doesn't serve write requests for ~10sec
 * Even in normal operation producers don't want to wait for write confirmation.
