@@ -1,11 +1,10 @@
-package usecase
+package services
 
 import (
 	"context"
 	"sort"
 
-	"go.audit/internal/entity"
-	"go.audit/internal/repository"
+	"go.audit/entity"
 )
 
 type Usecase struct {

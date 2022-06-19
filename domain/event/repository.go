@@ -1,12 +1,12 @@
-package repository
+package event
 
 import (
 	"context"
 
-	"go.audit/internal/entity"
+	"go.audit/entity"
 )
 
-type RepoIface interface {
+type Repository interface {
 	InsertEvent(context.Context, entity.Event) (entity.ID, error)
 	FindEvents(context.Context, entity.QueryParams) ([]entity.Event, error)
 

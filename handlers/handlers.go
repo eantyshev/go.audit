@@ -1,19 +1,16 @@
-package api
+package handlers
 
 import (
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-
-	"go.audit/internal/entity"
-	"go.audit/internal/repository"
-	"go.audit/internal/usecase"
+	"go.audit/entity"
 )
 
 type AuditApi struct {
 	httpSrv *http.Server
-	Usecase usecase.Iface
+
 	api_key string
 }
 

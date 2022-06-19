@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"go.audit/internal/entity"
-
+	"go.audit/domain/event"
+	"go.audit/entity"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,7 +22,9 @@ type Repo struct {
 	collection *mongo.Collection
 }
 
-func (r *Repo) InsertEvent(ctx context.Context, event entity.Event) (entity.ID, error) {
+var _ event.Repository = &Repo{}
+
+func (r *Repo) InsertEvent(ctx context.Context, event Event) (ID, error) {
 	// assign UTC timestamp
 	event.CreatedAt = time.Now().UTC()
 
