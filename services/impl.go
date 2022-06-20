@@ -4,21 +4,22 @@ import (
 	"context"
 	"sort"
 
-	"go.audit/entity"
+	audit "github.com/eantyshev/go.audit"
+	"github.com/eantyshev/go.audit/domain/event"
 )
 
-type Usecase struct {
-	Repo repository.RepoIface
+type EventSvcImpl struct {
+	Repo event.Repository
 }
 
-var _ Iface = &Usecase{}
+var _ EventSvc = &EventSvcImpl{}
 
-func (u *Usecase) AddEvent(event entity.Event) error {
+func (u *EventSvcImpl) AddEvent(event audit.EventBase) error {
 	_, err := u.Repo.InsertEvent(context.TODO(), event)
 	return err
 }
 
-func (u *Usecase) FindEvents(params entity.QueryParams) ([]entity.Event, error) {
+func (u *EventSvcImpl) FindEvents(params audit.QueryParams) ([]audit.Event, error) {
 	events, err := u.Repo.FindEvents(context.TODO(), params)
 	if err != nil {
 		return nil, err

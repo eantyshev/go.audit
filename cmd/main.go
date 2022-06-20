@@ -4,11 +4,12 @@ import (
 	"os"
 	"strings"
 
+	"github.com/eantyshev/go.audit/domain/event"
+	"github.com/eantyshev/go.audit/domain/event/repository"
+	"github.com/eantyshev/go.audit/domain/event/repository/mongodb"
+	"github.com/eantyshev/go.audit/handlers"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"go.audit/internal/api"
-	"go.audit/internal/repository"
-	"go.audit/internal/repository/mongodb"
 )
 
 func LoadConfig(cfgPath string) {
@@ -22,7 +23,7 @@ func LoadConfig(cfgPath string) {
 	}
 }
 
-func chooseRepo(storageType, mongoUri string) (repo repository.RepoIface) {
+func chooseRepo(storageType, mongoUri string) (repo event.Repository) {
 	switch storageType {
 	case "inmem":
 		repo = &repository.MemRepo{}
@@ -56,6 +57,6 @@ func main() {
 	repo := chooseRepo(*storageType, mongoUri)
 	defer repo.Close()
 
-	srv := api.MakeAuditApi(addrPort, timeout, api_key, repo)
+	srv := handlers.MakeAuditApi(addrPort, timeout, api_key, repo)
 	srv.ServeForever()
 }

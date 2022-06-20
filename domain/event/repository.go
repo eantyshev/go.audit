@@ -3,12 +3,12 @@ package event
 import (
 	"context"
 
-	"go.audit/entity"
+	audit "github.com/eantyshev/go.audit"
 )
 
 type Repository interface {
-	InsertEvent(context.Context, entity.Event) (entity.ID, error)
-	FindEvents(context.Context, entity.QueryParams) ([]entity.Event, error)
+	InsertEvent(context.Context, audit.EventBase) (audit.ID, error)
+	FindEvents(context.Context, audit.QueryParams) ([]audit.Event, error)
 
 	Close()
 }

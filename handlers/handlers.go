@@ -4,12 +4,15 @@ import (
 	"net/http"
 	"time"
 
+	audit "github.com/eantyshev/go.audit"
+	"github.com/eantyshev/go.audit/domain/event"
+	"github.com/eantyshev/go.audit/services"
 	"github.com/gin-gonic/gin"
-	"go.audit/entity"
 )
 
 type AuditApi struct {
 	httpSrv *http.Server
+	svc     services.EventSvc
 
 	api_key string
 }
@@ -29,13 +32,13 @@ func (s *AuditApi) ServeForever() {
 }
 
 func (s *AuditApi) addEventHandler(c *gin.Context) {
-	var event entity.Event
+	var event CreateEventRequest
 
 	if err := c.ShouldBindJSON(&event); err != nil {
 		ErrResponse(c, http.StatusBadRequest, err)
 		return
 	}
-	if err := s.Usecase.AddEvent(event); err != nil {
+	if err := s.svc.AddEvent(audit.EventBase(event)); err != nil {
 		ErrResponse(c, http.StatusInternalServerError, err)
 		return
 	}
@@ -43,13 +46,13 @@ func (s *AuditApi) addEventHandler(c *gin.Context) {
 }
 
 func (s *AuditApi) getEventsHandler(c *gin.Context) {
-	var params entity.QueryParams
+	var params QueryParams
 
 	if err := c.BindJSON(&params); err != nil {
 		ErrResponse(c, http.StatusBadRequest, err)
 		return
 	}
-	events, err := s.Usecase.FindEvents(params)
+	events, err := s.svc.FindEvents(audit.QueryParams(params))
 	if err != nil {
 		ErrResponse(c, http.StatusInternalServerError, err)
 		return
@@ -61,10 +64,10 @@ func MakeAuditApi(
 	addrPort string,
 	timeout time.Duration,
 	api_key string,
-	repo repository.RepoIface,
+	repo event.Repository,
 ) (s *AuditApi) {
 	s = &AuditApi{
-		Usecase: &usecase.Usecase{
+		svc: &services.EventSvcImpl{
 			Repo: repo,
 		},
 		api_key: api_key}

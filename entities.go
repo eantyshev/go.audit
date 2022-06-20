@@ -1,4 +1,4 @@
-package go.audit
+package audit
 
 import "time"
 
@@ -17,7 +17,7 @@ type Event struct {
 }
 
 type QueryParams struct {
-	Type, Consumer string
-	CreatedFrom    time.Time
-	CreatedTo      time.Time
+	Type, Consumer *string
+	CreatedFrom    *time.Time
+	CreatedTo      *time.Time
 }

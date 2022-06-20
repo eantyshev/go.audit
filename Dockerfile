@@ -8,7 +8,7 @@ COPY go.sum .
 RUN go mod download
 
 COPY . .
-RUN CGO_ENABLED=0 go build -o /opt/service/audit_api
+RUN CGO_ENABLED=0 go build -o /opt/service/audit_api cmd/main.go
 
 # Release
 FROM alpine:latest

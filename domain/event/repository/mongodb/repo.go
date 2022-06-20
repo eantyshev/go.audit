@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"go.audit/domain/event"
-	"go.audit/entity"
+	audit "github.com/eantyshev/go.audit"
+	"github.com/eantyshev/go.audit/domain/event"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,13 +22,28 @@ type Repo struct {
 	collection *mongo.Collection
 }
 
+type InsertDoc struct {
+	Type      string                 `bson:"type"`
+	Consumer  string                 `bson:"consumer"`
+	Payload   map[string]interface{} `bson:"payload,inline,omitempty"`
+	CreatedAt time.Time              `bson:"created_at"`
+}
+
+func MakeInsertDoc(event audit.EventBase) (doc InsertDoc) {
+	doc.Consumer = event.Consumer
+	doc.Type = event.Type
+	doc.Payload = event.Payload
+
+	// assign UTC timestamp
+	doc.CreatedAt = time.Now().UTC()
+	return doc
+}
+
 var _ event.Repository = &Repo{}
 
-func (r *Repo) InsertEvent(ctx context.Context, event Event) (ID, error) {
-	// assign UTC timestamp
-	event.CreatedAt = time.Now().UTC()
+func (r *Repo) InsertEvent(ctx context.Context, event audit.EventBase) (audit.ID, error) {
 
-	doc, err := bson.Marshal(event)
+	doc, err := bson.Marshal(MakeInsertDoc(event))
 	if err != nil {
 		return "", fmt.Errorf("failed to serialize to BSON: %w", err)
 	}
@@ -40,11 +55,11 @@ func (r *Repo) InsertEvent(ctx context.Context, event Event) (ID, error) {
 	if _id, ok := result.InsertedID.(primitive.ObjectID); !ok {
 		return "", errors.New("failed to get _id")
 	} else {
-		return entity.ID(_id.String()), nil
+		return audit.ID(_id.String()), nil
 	}
 }
 
-func MakeQueryBSON(params entity.QueryParams) bson.M {
+func MakeQueryBSON(params audit.QueryParams) bson.M {
 	query := bson.M{}
 	if params.Consumer != nil {
 		query["consumer"] = *params.Consumer
@@ -71,8 +86,8 @@ func MakeQueryBSON(params entity.QueryParams) bson.M {
 	return query
 }
 
-func (r *Repo) FindEvents(ctx context.Context, params entity.QueryParams) ([]entity.Event, error) {
-	lst := make([]entity.Event, 0)
+func (r *Repo) FindEvents(ctx context.Context, params audit.QueryParams) ([]audit.Event, error) {
+	lst := make([]audit.Event, 0)
 	queryBson := MakeQueryBSON(params)
 	cursor, err := r.collection.Find(ctx, queryBson)
 	if err != nil {

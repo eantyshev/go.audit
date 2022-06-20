@@ -1,4 +1,4 @@
-module go.audit
+module github.com/eantyshev/go.audit
 
 go 1.18
 
@@ -9,20 +9,16 @@ require (
 )
 
 require (
-	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
-	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
-	github.com/confluentinc/confluent-kafka-go v1.8.2 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
+	github.com/kr/pretty v0.2.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.0.2 // indirect
 	github.com/xdg-go/stringprep v1.0.2 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
-	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
-	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
-	gopkg.in/confluentinc/confluent-kafka-go.v1 v1.8.2 // indirect
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 )
 
 require (

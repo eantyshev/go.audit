@@ -3,7 +3,7 @@ package handlers
 import (
 	"time"
 
-	"go.audit/internal/entity"
+	audit "github.com/eantyshev/go.audit"
 )
 
 type CreateEventRequest struct {
@@ -13,7 +13,7 @@ type CreateEventRequest struct {
 }
 
 type Event struct {
-	Id        ID        `json:"id"`
+	Id        audit.ID  `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 
 	Type     string                 `json:"type" binding:"required"`
@@ -32,5 +32,5 @@ type ErrorResponse struct {
 }
 
 type ListEventsResponse struct {
-	Events []entity.Event `json:"events"`
+	Events []audit.Event `json:"events"`
 }
